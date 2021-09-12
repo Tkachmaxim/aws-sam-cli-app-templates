@@ -2,6 +2,7 @@ import json
 import time
 import requests
 import os
+import boto3
 
 
 
@@ -53,3 +54,19 @@ def lambda_handler(event, context):
         "statusCode": 200,
         "body": json.dumps(result, ensure_ascii=False)
     }
+
+
+
+client = boto3.client('logs')
+stream_response = client.describe_log_streams(
+        logGroupName="/aws/lambda/sam-hello-world-HelloWorldFunction-YhDOKxjYdMDy", # Can be dynamic]
+        orderBy='LastEventTime',                # For the latest events
+        limit=50
+        )
+name_of_logs=stream_response['logStreams'][-1:][0]['logStreamName']
+
+response = client.get_log_events(
+             logGroupName="/aws/lambda/sam-hello-world-HelloWorldFunction-YhDOKxjYdMDy",
+             logStreamName=f'{name_of_logs}'
+        )
+print(len(response['events'])/3)

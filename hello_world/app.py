@@ -4,8 +4,9 @@ import requests
 import os
 
 
+
 def lambda_handler(event, context):
-    start_time=int(time.time())
+    start_time=time.time()
     # connect to the table
     AIRTABLE_BASE_ID = 'appYQAU5CcytTTkKs'
     AIRTABLE_NAME = 'MainTable'
@@ -35,7 +36,7 @@ def lambda_handler(event, context):
 
     # create algorithm of extraction data as circle buffer that change sequently every second
     # if we get time in second and divide on lenght of data getting remainder we will get index
-    start_index = start_time % len(new_list)
+    start_index = (int(time.time())) % len(new_list)
     # and index should be more on 3 as we get 3 records
     end_index = start_index + 3
     # but if we get  end index that more len of our list data make another list
@@ -46,6 +47,7 @@ def lambda_handler(event, context):
     else:
         result = new_list[start_index:end_index]
 
+    print(result)
 
     return {
         "statusCode": 200,
